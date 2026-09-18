@@ -255,6 +255,10 @@
       });
       if (!res.ok) throw new Error('submit_failed');
 
+      const data = await res.json();
+      if (data && data.id) {
+        sessionStorage.setItem('safwa_order_id', data.id);
+      }
       window.location.href = 'payment.html';
     } catch (err) {
       document.getElementById('submitError').classList.add('show');
