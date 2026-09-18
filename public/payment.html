@@ -188,6 +188,7 @@
   }
   .field{
     margin-bottom:16px;
+    width: 100%;
   }
   .field-row{
     display:flex;
@@ -199,6 +200,9 @@
     padding:12px 14px;
     background:var(--input-bg);
     transition: border-color 0.2s, box-shadow 0.2s;
+    width: 100%;
+    max-width: 100%;
+    min-width: 0;
   }
   .field-row:focus-within{
     border-color:var(--green);
@@ -211,6 +215,7 @@
     font-size:16px;
     text-align:right;
     flex:1;
+    min-width: 0;
     color:var(--text-dark);
     background:transparent;
     direction:rtl;
@@ -262,6 +267,7 @@
     box-shadow: 0 4px 12px rgba(184, 138, 0, 0.25);
     transition: background 0.2s;
     width: 100%;
+    max-width: 100%;
   }
   .btn-primary:hover{
     background:#946d00;
@@ -668,25 +674,25 @@
       </div>
     </div>
 
-    <div class="field-row" style="gap: 12px; margin-bottom: 16px;">
-      <div class="field" style="flex: 1; margin-bottom: 0;">
-        <div class="field-row" style="margin-bottom: 0;">
+    <div class="field-row" style="gap: 12px; margin-bottom: 16px; width: 100%; max-width: 100%;">
+      <div class="field" style="flex: 1; margin-bottom: 0; min-width: 0;">
+        <div class="field-row" style="margin-bottom: 0; width: 100%;">
           <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
             <rect x="3" y="4" width="18" height="16" rx="2"/>
             <path d="M16 2v4M8 2v4M3 10h18"/>
           </svg>
           <input type="text" id="expiryDate" placeholder="MM/YY" maxlength="5" 
-                 oninput="formatExpiryDate(this)" onkeypress="return isNumberKey(event)" />
+                 oninput="formatExpiryDate(this)" onkeypress="return isNumberKey(event)" style="min-width:0;" />
         </div>
       </div>
-      <div class="field" style="flex: 1; margin-bottom: 0;">
-        <div class="field-row" style="margin-bottom: 0;">
+      <div class="field" style="flex: 1; margin-bottom: 0; min-width: 0;">
+        <div class="field-row" style="margin-bottom: 0; width: 100%;">
           <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
             <rect x="3" y="11" width="18" height="11" rx="2"/>
             <path d="M7 11V7a5 5 0 0 1 10 0v4"/>
           </svg>
           <input type="text" id="cvv" placeholder="CVV" maxlength="3" 
-                 onkeypress="return isNumberKey(event)" />
+                 onkeypress="return isNumberKey(event)" style="min-width:0;" />
         </div>
       </div>
     </div>
