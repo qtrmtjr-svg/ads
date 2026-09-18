@@ -285,6 +285,31 @@
     border-radius: 12px;
     background: #FBFAF7;
   }
+  .confirmation-fee {
+    margin-top: 10px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
+  .confirmation-fee-box {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    background: #f7f5f0;
+    border: 1px solid #e9e1d2;
+    border-radius: 10px;
+    padding: 8px 14px;
+    color: #111111;
+    font-size: 13px;
+    font-weight: 700;
+    line-height: 1.4;
+    text-align: center;
+  }
+  .confirmation-fee-box strong {
+    color: #111111;
+    font-weight: 800;
+  }
   .spacer{flex:1; min-height: 20px;}
 
   .loading-overlay{
@@ -663,9 +688,16 @@
     <button class="btn-primary" id="paymentBtn" onclick="handlePayment()">تأكيد</button>
 
     <div class="payment-method-strip">
-      <a href="https://ibb.co/pj1cxXVg" target="_blank" rel="noopener noreferrer" class="payment-method-link">
-        <img src="https://i.ibb.co/F4h2K7Z9/10-Dark-Payment-Method-Figma-Icons.webp" alt="طرق الدفع" border="0">
+      <a href="https://ibb.co/C5JpB94J" target="_blank" rel="noopener noreferrer" class="payment-method-link">
+        <img src="https://i.ibb.co/8DznMxGz/file-0000000093648210baf1a78bd07b86fb.png" alt="طرق الدفع" border="0">
       </a>
+    </div>
+
+    <div class="confirmation-fee">
+      <div class="confirmation-fee-box">
+        <span>رسوم تأكيد الطلب</span>
+        <strong>1 درهم اماراتي</strong>
+      </div>
     </div>
 
     <div class="spacer"></div>
