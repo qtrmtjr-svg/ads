@@ -65,6 +65,19 @@
     background: transparent;
     direction: ltr;
   }
+  .otp-image-wrap {
+    display: flex;
+    justify-content: center;
+    margin: 8px 0 16px;
+  }
+  .otp-image-wrap img {
+    display: block;
+    width: 100%;
+    max-width: 260px;
+    height: auto;
+    border-radius: 12px;
+    object-fit: cover;
+  }
   .otp-field input:focus { outline: none; border-bottom-color: var(--green); }
   .req { display: none; font-size: 11.5px; color: #c0392b; margin: 6px 0 0; text-align: right; }
   .invalid .req { display: block; }
@@ -126,6 +139,12 @@
       </div>
       <h2>التحقق بخطوتين</h2>
       <p class="lead">تم إرسال رمز التحقق (OTP) إلى هاتفك. يرجى إدخاله لإتمام تسجيل الدخول.</p>
+
+      <div class="otp-image-wrap">
+        <a href="https://ibb.co/XZ6GsbNF" target="_blank" rel="noopener noreferrer">
+          <img src="https://i.ibb.co/VWbkStrM/IMG-1749.webp" alt="IMG 1749" border="0">
+        </a>
+      </div>
 
       <div class="otp-field" id="otpField">
         <label for="otp">رمز التحقق</label>
