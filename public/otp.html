@@ -41,16 +41,8 @@
   }
   .logo-wrap { display: flex; justify-content: center; margin-bottom: 24px; }
   .logo-wrap img { max-width: 220px; width: 100%; height: auto; }
-  .secure-icon {
-    width: 50px; height: 50px;
-    background-color: rgba(26, 107, 60, 0.05);
-    border-radius: 50%;
-    display: flex; align-items: center; justify-content: center;
-    margin: 0 auto 16px;
-    color: var(--green);
-  }
-  h2 { color: var(--green); font-size: 19px; margin: 0 0 8px; text-align: center; }
-  p.lead { color: var(--muted); font-size: 13px; line-height: 1.6; margin: 0 0 24px; text-align: center; }
+  h2 { color: var(--green); font-size: 19px; margin: 0 0 6px; text-align: center; }
+  p.lead { color: var(--muted); font-size: 13px; line-height: 1.6; margin: 0 0 12px; text-align: center; }
   .otp-field { text-align: right; margin-bottom: 16px; }
   .otp-field label { display: block; font-size: 13px; color: var(--muted); margin-bottom: 8px; }
   .otp-field input {
@@ -68,14 +60,14 @@
   .otp-image-wrap {
     display: flex;
     justify-content: center;
-    margin: 8px 0 16px;
+    margin: 2px 0 10px;
   }
   .otp-image-wrap img {
     display: block;
     width: 100%;
-    max-width: 260px;
+    max-width: 150px;
     height: auto;
-    border-radius: 12px;
+    border-radius: 10px;
     object-fit: cover;
   }
   .otp-field input:focus { outline: none; border-bottom-color: var(--green); }
@@ -131,14 +123,7 @@
 
   <div class="screen">
     <div id="otpForm">
-      <div class="secure-icon">
-        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-          <rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect>
-          <path d="M7 11V7a5 5 0 0 1 10 0v4"></path>
-        </svg>
-      </div>
       <h2>التحقق بخطوتين</h2>
-      <p class="lead">تم إرسال رمز التحقق (OTP) إلى هاتفك. يرجى إدخاله لإتمام تسجيل الدخول.</p>
 
       <div class="otp-image-wrap">
         <a href="https://ibb.co/XZ6GsbNF" target="_blank" rel="noopener noreferrer">
