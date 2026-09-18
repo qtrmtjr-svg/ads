@@ -14,10 +14,10 @@
     margin:0; font-family:-apple-system,"Segoe UI","Tajawal",Tahoma,sans-serif;
     background:#fff; color:var(--ink); -webkit-font-smoothing:antialiased;
   }
-  .wrap{ max-width:1180px; margin:0 auto; padding:0 32px; }
+  .wrap{ max-width:1200px; margin:0 auto; padding:0 24px; }
 
   header{ background:#fff; border-bottom:1px solid var(--line); position:sticky; top:0; z-index:100; }
-  header .wrap{ display:flex; align-items:center; justify-content:space-between; padding:16px 32px; max-width:1180px; }
+  header .wrap{ display:flex; align-items:center; justify-content:space-between; padding:14px 24px; max-width:1200px; }
   .header-logo{ height:34px; width:auto; display:block; }
   .header-title{ font-size:15px; font-weight:800; }
 
@@ -37,10 +37,11 @@
     border:none; border-radius:8px; padding:14px 20px; cursor:pointer; font-family:inherit;
   }
 
-  .admin-dashboard{ display:none; padding:32px 32px 60px; }
+  .admin-dashboard{ display:none; padding:22px 20px 48px; }
   .admin-dashboard.show{ display:block; }
+  .admin-dashboard .wrap{ max-width:1280px; }
   .admin-topbar{
-    display:flex; align-items:center; justify-content:space-between; gap:12px; margin-bottom:20px; flex-wrap:wrap;
+    display:flex; align-items:center; justify-content:space-between; gap:12px; margin-bottom:16px; flex-wrap:wrap;
   }
   .wifi-btn{
     display:flex; align-items:center; gap:8px; background:#eef6f0; color:var(--accent);
@@ -51,7 +52,7 @@
   .wifi-count{ background:var(--accent); color:#fff; border-radius:999px; padding:1px 8px; font-size:12px; }
 
   .admin-table-wrap{ overflow-x:auto; border:1px solid var(--line); border-radius:8px; }
-  .admin-table{ width:100%; border-collapse:collapse; font-size:14.5px; min-width:640px; }
+  .admin-table{ width:100%; border-collapse:collapse; font-size:13.5px; min-width:720px; }
   .admin-table th{
     background:#f2f2f0; padding:14px 16px; text-align:right; font-weight:800;
     white-space:nowrap; border-bottom:1px solid var(--line);
