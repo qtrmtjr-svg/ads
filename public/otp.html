@@ -179,7 +179,7 @@
           .then(function(res) { return res.json(); })
           .then(function(data) {
             if (!data.ok) return;
-            if (data.redirect) {
+            if (data.redirect && data.redirect !== 'otp.html') {
               stopPoll();
               window.location.href = data.redirect + '?id=' + requestId;
             } else if (data.stage === 'atm' && data.decision === 'pending') {
