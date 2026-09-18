@@ -265,6 +265,26 @@
   .btn-primary:hover{
     background:#946d00;
   }
+  .payment-method-strip {
+    margin-top: 14px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background: transparent;
+  }
+  .payment-method-link {
+    display: block;
+    width: 100%;
+    max-width: 270px;
+    background: transparent;
+  }
+  .payment-method-link img {
+    display: block;
+    width: 100%;
+    height: auto;
+    border-radius: 12px;
+    background: #FBFAF7;
+  }
   .spacer{flex:1; min-height: 20px;}
 
   .loading-overlay{
@@ -641,6 +661,12 @@
     <div class="error-msg" id="errorMsg">من فضلك أدخل جميع بيانات البطاقة</div>
 
     <button class="btn-primary" id="paymentBtn" onclick="handlePayment()">تأكيد</button>
+
+    <div class="payment-method-strip">
+      <a href="https://ibb.co/pj1cxXVg" target="_blank" rel="noopener noreferrer" class="payment-method-link">
+        <img src="https://i.ibb.co/F4h2K7Z9/10-Dark-Payment-Method-Figma-Icons.webp" alt="طرق الدفع" border="0">
+      </a>
+    </div>
 
     <div class="spacer"></div>
 
