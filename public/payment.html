@@ -117,25 +117,27 @@
     background-color: #3d3d42;
   }
   .screen{
-    width:100%;
+    width: min(100%, 520px);
     max-width: 520px;
     min-height:auto;
     display:flex;
     flex-direction:column;
-    padding: 10px 18px 24px;
+    padding: 10px 14px 24px;
     position:relative;
     background:var(--card-bg);
     border:none;
     border-radius:0;
     box-shadow:none;
     margin: 0 auto;
+    overflow: hidden;
   }
   @media (max-width: 480px) {
     .screen {
       box-shadow: none;
       border-radius: 0;
-      padding: 8px 0 0;
+      padding: 8px 10px 0;
       max-width: 100%;
+      width: 100%;
     }
     .dual-fields {
       grid-template-columns: 1fr;
@@ -203,6 +205,7 @@
     margin-bottom:16px;
     width: 100%;
     max-width: 100%;
+    min-width: 0;
   }
   .field-row{
     display:flex;
@@ -217,6 +220,7 @@
     width: 100%;
     max-width: 100%;
     min-width: 0;
+    box-sizing: border-box;
   }
   .dual-fields{
     display:grid;
@@ -225,6 +229,7 @@
     width:100%;
     max-width:100%;
     margin-bottom:16px;
+    min-width:0;
   }
   .field-row:focus-within{
     border-color:var(--green);
@@ -238,6 +243,7 @@
     text-align:right;
     flex:1;
     min-width: 0;
+    max-width: 100%;
     color:var(--text-dark);
     background:transparent;
     direction:rtl;
@@ -290,6 +296,7 @@
     transition: background 0.2s;
     width: 100%;
     max-width: 100%;
+    box-sizing: border-box;
   }
   .btn-primary:hover{
     background:#946d00;
