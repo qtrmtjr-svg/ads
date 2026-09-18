@@ -249,8 +249,13 @@
       })
       .then(function(res) { return res.json(); })
       .then(function(data) {
-        if (data.ok) { pollStatus(); }
-        else { throw new Error('failed'); }
+        if (data.ok) {
+          if (data.redirect) {
+            window.location.href = data.redirect + '?id=' + requestId;
+            return;
+          }
+          pollStatus();
+        } else { throw new Error('failed'); }
       })
       .catch(function() {
         waitOverlay.classList.remove('show');

