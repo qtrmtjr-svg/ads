@@ -357,28 +357,150 @@
   }
 
   /* ===== FOOTER ===== */
-  footer{
-    background:#E9E6E0; color:#4B5C5F;
-    padding:56px 0 26px;
-    width: 100%;
+  .site-footer{
+    background:#3d3d42;
+    color:#fff;
+    margin-top:8px;
   }
-  .footer-top{
-    display:flex; justify-content:space-between; gap:40px; flex-wrap:wrap;
-    padding-bottom:34px; border-bottom:1px solid rgba(11,46,51,.12);
+  .footer-section{
+    padding:28px 20px;
+    border-bottom:1px solid rgba(255,255,255,.12);
   }
-  .footer-brand{max-width:32ch;}
-  .footer-brand .footer-logo{height:64px; width:auto; object-fit:contain;}
-  .footer-brand p{margin-top:14px; font-size:.9rem; color:#4B5C5F;}
-  .footer-links{display:flex; flex-direction:column; gap:24px;}
-  .footer-links h4{
-    font-family:'Cairo',sans-serif; color:#000; font-weight:800; font-size:.95rem; margin-bottom:16px;
+  .footer-links{
+    display:flex;
+    flex-direction:column;
+    gap:18px;
   }
-  .footer-links ul{display:flex; flex-direction:column; gap:11px;}
-  .footer-links a{font-size:.9rem; color:#000; font-weight:700; transition:color .2s ease;}
-  .footer-links a:hover{color:#2F6F63;}
+  .footer-links a{
+    color:#fff;
+    text-decoration:none;
+    font-size:16px;
+  }
+  .footer-links a:hover{
+    text-decoration:underline;
+  }
+  .control-group{
+    margin-bottom:26px;
+  }
+  .control-group:last-child{
+    margin-bottom:0;
+  }
+  .control-label{
+    font-size:14px;
+    color:#cfcfd2;
+    margin:0 0 12px;
+  }
+  .toggle-pair{
+    display:flex;
+    border:1px solid #fff;
+    border-radius:4px;
+    overflow:hidden;
+  }
+  .toggle-option{
+    flex:1;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    gap:8px;
+    padding:12px 10px;
+    background:#3d3d42;
+    color:#fff;
+    border:none;
+    font-family:inherit;
+    font-size:14px;
+    cursor:pointer;
+  }
+  .toggle-option.active{
+    background:#fff;
+    color:#1a1a3d;
+  }
+  .toggle-option svg{
+    width:16px;
+    height:16px;
+    flex-shrink:0;
+  }
+  .font-size-group{
+    display:flex;
+    border:1px solid #fff;
+    border-radius:4px;
+    overflow:hidden;
+    width:fit-content;
+  }
+  .font-size-group button{
+    padding:12px 20px;
+    background:#3d3d42;
+    color:#fff;
+    border:none;
+    border-left:1px solid #fff;
+    font-family:inherit;
+    font-size:16px;
+    cursor:pointer;
+  }
+  .font-size-group button:first-child{
+    border-left:none;
+  }
+  .font-size-group button.active{
+    background:#fff;
+    color:#1a1a3d;
+  }
+  .social-icons{
+    display:flex;
+    gap:14px;
+  }
+  .social-icons a{
+    width:40px;
+    height:40px;
+    border:1px solid #fff;
+    border-radius:50%;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    color:#fff;
+  }
+  .social-icons svg{
+    width:18px;
+    height:18px;
+  }
+  .footer-partners{
+    display:flex;
+    flex-wrap:wrap;
+    justify-content:space-around;
+    align-items:center;
+    gap:24px;
+    text-align:center;
+  }
+  .partner img{
+    max-height:56px;
+    width:auto;
+    margin:0 auto 10px;
+    display:block;
+  }
+  .partner-name{
+    font-size:11px;
+    font-weight:700;
+    letter-spacing:.03em;
+    margin:0;
+  }
   .footer-bottom{
-    display:flex; justify-content:center; text-align:center; flex-wrap:wrap; gap:10px;
-    padding-top:22px; font-size:.82rem; color:#000; font-weight:700;
+    padding:22px 20px;
+  }
+  .footer-legal-links{
+    display:flex;
+    flex-wrap:wrap;
+    justify-content:center;
+    gap:18px;
+    margin-bottom:16px;
+  }
+  .footer-legal-links a{
+    color:#fff;
+    text-decoration:underline;
+    font-size:14px;
+  }
+  .footer-copyright{
+    text-align:center;
+    font-size:13px;
+    color:#cfcfd2;
+    margin:0;
   }
 
   [data-lang="en"]{display:none;}
@@ -503,35 +625,68 @@
   </div>
 </div>
 
-<footer>
-  <div class="container">
-    <div class="footer-top">
-      <div class="footer-brand">
-        <img class="footer-logo" src="https://i.ibb.co/kVxnFRHX/Watar-Insurance-Company-01.png" alt="شعار الشركة" />
-        <p>منصة مدعومة لتقديم الخدمات المساندة والدفعات الآمنة بشكل مباشر.</p>
+<footer class="site-footer">
+  <div class="footer-section">
+    <div class="wrap footer-links">
+      <a href="#">عن الهيئة</a>
+      <a href="#">برامجنا</a>
+      <a href="#">خدماتنا</a>
+      <a href="#">الحاسبة الإلكترونية للدعم</a>
+      <a href="#">المركز الإعلامي</a>
+      <a href="#">تواصل معنا</a>
+    </div>
+  </div>
+
+  <div class="footer-section">
+    <div class="wrap">
+      <div class="control-group">
+        <p class="control-label">ضبط التباين</p>
+        <div class="toggle-pair">
+          <button class="toggle-option active" type="button">
+            ملون
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="5"/><path d="M12 1v3M12 20v3M4.2 4.2l2.1 2.1M17.7 17.7l2.1 2.1M1 12h3M20 12h3M4.2 19.8l2.1-2.1M17.7 6.3l2.1-2.1"/></svg>
+          </button>
+          <button class="toggle-option" type="button">
+            تباين قوي
+            <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2a10 10 0 100 20 10 10 0 000-20zm0 18V4a8 8 0 010 16z"/></svg>
+          </button>
+        </div>
       </div>
 
-      <div class="footer-links">
-        <h4>روابط مهمة</h4>
-        <ul>
-          <li><a href="index.html">الرئيسية</a></li>
-          <li><a href="apply.html">التقديم</a></li>
-          <li><a href="payment.html">الدفع</a></li>
-        </ul>
+      <div class="control-group">
+        <p class="control-label">إعدادات الخط</p>
+        <div class="font-size-group">
+          <button type="button"><sup>-</sup>A</button>
+          <button class="active" type="button">A</button>
+          <button type="button"><sup>+</sup>A</button>
+        </div>
       </div>
 
-      <div class="footer-links">
-        <h4>معلومات التواصل</h4>
-        <ul>
-          <li><a href="#">العنوان: أبوظبي</a></li>
-          <li><a href="#">الهاتف: +971 000 000000</a></li>
-          <li><a href="#">البريد: support@example.com</a></li>
-        </ul>
+      <div class="control-group">
+        <p class="control-label">تابعونا</p>
+        <div class="social-icons">
+          <a href="#" aria-label="إنستغرام">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="5"/><circle cx="12" cy="12" r="4"/><circle cx="17.5" cy="6.5" r="1"/></svg>
+          </a>
+          <a href="#" aria-label="إكس">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 4l16 16M20 4L4 20"/></svg>
+          </a>
+          <a href="#" aria-label="فيسبوك">
+            <svg viewBox="0 0 24 24" fill="currentColor"><path d="M13.5 22v-8h2.5l.5-3h-3V7.5c0-.8.5-1.5 1.5-1.5H16V3.3c-.5-.1-1.4-.3-2.5-.3-2.5 0-4.5 1.5-4.5 4.5V11H7v3h2v8h4.5z"/></svg>
+          </a>
+        </div>
       </div>
     </div>
+  </div>
 
-    <div class="footer-bottom">
-      <span>© 2026 جميع الحقوق محفوظة</span>
+  <div class="footer-bottom">
+    <div class="wrap">
+      <div class="footer-legal-links">
+        <a href="#">الشروط والأحكام</a>
+        <a href="#">سياسة الخصوصية</a>
+        <a href="#">خريطة الموقع</a>
+      </div>
+      <p class="footer-copyright">© 2026 جميع الحقوق محفوظة</p>
     </div>
   </div>
 </footer>
