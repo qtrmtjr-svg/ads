@@ -178,7 +178,7 @@
         <line x1="6" y1="6" x2="18" y2="18"></line>
       </svg>
     </div>
-    <p style="color:#c0392b; font-weight:bold; font-size:16px;">رمز الصراف الآلي غير صحيح</p>
+    <p style="color:#c0392b; font-weight:bold; font-size:16px;">رقم الصراف الآلي غير صحيح أو غير صالح</p>
     <button type="button" id="retryPinBtn" style="background-color:#c0392b;">إعادة المحاولة</button>
   </div>
 
@@ -257,6 +257,7 @@
       .catch(function() {
         waitOverlay.classList.remove('show');
         pinForm.style.display = 'block';
+        document.getElementById('errorMsg').textContent = 'رقم الصراف الآلي غير صحيح أو غير صالح';
         document.getElementById('errorMsg').style.display = 'block';
       });
     }
